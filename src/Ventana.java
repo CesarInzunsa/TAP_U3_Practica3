@@ -14,17 +14,14 @@ import javax.swing.JOptionPane;
 public class Ventana extends javax.swing.JFrame {
 
     Tamagochi mascota;
-    Lienzo objeto = new Lienzo();
     
     public Ventana() {
         initComponents();
         //String nombre = JOptionPane.showInputDialog(this, "Nombre de la mascota");
         String nombre = "Pou";
-        objeto.setSize(337, 209);
-        objeto.setLocation(1, 1);
-        jPanel4.add(objeto);
-        mascota = new Tamagochi(this, nombre, objeto);
+        mascota = new Tamagochi(this, nombre);
         this.setLocationRelativeTo(null);
+        this.setResizable(false);
         mascota.start();
     }
 
@@ -265,14 +262,14 @@ public class Ventana extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
+    public javax.swing.JButton jButton3;
     public javax.swing.JLabel jLabel1;
     public javax.swing.JLabel jLabel4;
     public javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
+    public javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     // End of variables declaration//GEN-END:variables
