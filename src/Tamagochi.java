@@ -14,13 +14,18 @@ public class Tamagochi extends Thread {
     private Ventana puntero;
     private int estado = 1;
     private int energiaMaxima = 100;
-    ImageIcon img;
-    ImageIcon imgPequeno;
-    private int x, y;
+    private int energiaComer = 5;
+    private Image img;
+    private Image imgPequeno;
+    private int nivel = 1;
+    private Lienzo lienzo;
+    private int x = 90, y =50;
+    private int desplazamiento = 5;
 
-    public Tamagochi(Ventana ventana, String nombre) {
+    public Tamagochi(Ventana ventana, String nombre, Lienzo lienzo) {
         this.puntero = ventana;
         this.puntero.setTitle(nombre);
+        this.lienzo = lienzo;
     }
 
     @Override
@@ -30,60 +35,115 @@ public class Tamagochi extends Thread {
         do {
             try {
                 mostrarMascota();
+                moverMascota();
                 puntero.jLabel1.setText(energia + "");
+                puntero.jLabel4.setText(energiaMaxima + "");
+                puntero.jLabel5.setText(nivel + "");
                 --energia;
-                sleep(1000);
+                sleep(500);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Tamagochi.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-        } while (energia >= 0);
+        } while (energia >= -1);
 
     }
 
     private void mostrarMascota() {
-        
+
         switch (estado) {
             case 1:
-                img = new ImageIcon(getClass().getResource("/Imagenes/normal.png"));
-                imgPequeno = escalarImagen(img, 200, 140);
-                puntero.jLabel2.setIcon(imgPequeno);
-                if (energia == (energiaMaxima * 0.3)) {
+                img = new ImageIcon(getClass().getResource("/Imagenes/normal.png")).getImage();
+                //imgPequeno = escalarImagen(img);
+                //puntero.jLabel2.setIcon(imgPequeno);
+                lienzo.dibujarMascota(img);
+                if (energia <= (energiaMaxima * 0.2)) {
                     estado = 2;
                 }
                 break;
             case 2:
-                img = new ImageIcon(getClass().getResource("/Imagenes/cansado.png"));
-                imgPequeno = escalarImagen(img,200,160 );
-                puntero.jLabel2.setIcon(imgPequeno);
-                if (energia == 1) {
+                img = new ImageIcon(getClass().getResource("/Imagenes/cansado.png")).getImage();
+                //imgPequeno = escalarImagen(img);
+                //puntero.jLabel2.setIcon(imgPequeno);
+                lienzo.dibujarMascota(img);
+                if (energia <= 0) {
                     estado = 3;
                 }
-                break;   
-            case 3:
-                img = new ImageIcon(getClass().getResource("/Imagenes/tumba.png"));
-                imgPequeno = escalarImagen(img,200,140);
-                puntero.jLabel2.setIcon(imgPequeno);
                 break;
+            case 3:
+                puntero.setTitle("FIN DEL JUEGO");
+                img = new ImageIcon(getClass().getResource("/Imagenes/tumba.png")).getImage();
+                //imgPequeno = escalarImagen(img);
+                //puntero.jLabel2.setIcon(imgPequeno);
+                lienzo.dibujarMascota(img);
+                try {
+                    sleep(1000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Tamagochi.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                stop();
+                break;
+
+            case 4:
+                try {
+                img = new ImageIcon(getClass().getResource("/Imagenes/dormir.png")).getImage();
+                //imgPequeno = escalarImagen(img);
+                //puntero.jLabel2.setIcon(imgPequeno);
+                lienzo.dibujarMascota(img);
+                sleep(3000);
+                energia = energiaMaxima;
+                estado = 1;
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Tamagochi.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            break;
+            case 5:
+                try {
+                img = new ImageIcon(getClass().getResource("/Imagenes/comer.png")).getImage();
+                //imgPequeno = escalarImagen(img);
+                //puntero.jLabel2.setIcon(imgPequeno);
+                lienzo.dibujarMascota(img);
+                sleep(3000);
+                energia += energiaComer;
+                if (energia > energiaMaxima) {
+                    energia = energiaMaxima;
+                }
+                if (energia <= (energiaMaxima * 0.2)) {
+                    estado = 2;
+                } else {
+                    estado = 1;
+                }
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Tamagochi.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            break;
+
         }
 
     }
-    
-    private ImageIcon escalarImagen(ImageIcon img, int x, int y) {
-        Image imgLabel = img.getImage().getScaledInstance(x, y, Image.SCALE_SMOOTH);
-        return new ImageIcon(imgLabel);
+
+    public void dormir() {
+        estado = 4;
+    }
+
+    public void comer() {
+        estado = 5;
+    }
+
+    public void jugar() {
+
+        energiaMaxima += 3;
+        energiaComer += 1;
+        energia -= 5;
+        nivel++;
     }
     
-    public void dormir(){
-        
+    public void moverMascota(){
+        y += desplazamiento;
+        if (y >= 200 || y<=80) {
+            desplazamiento *= -1;
+        }
+        lienzo.moverMascota(x, y);
     }
-    
-    public void comer(){
-        
-    }
-    
-    public void jugar(){
-        
-    }
-    
+
 }
